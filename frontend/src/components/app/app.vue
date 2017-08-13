@@ -148,7 +148,12 @@
                           <template scope="scope">
                             <el-button-group>
                               <el-button icon="edit" size="small" @click="startEditEnvData(scope.row)">编辑</el-button>
-                              <!-- Form -->
+                              <el-button icon="delete" size="small" type="danger" @click="handleEnvDelete(scope.$index, ruleEnvForm.id)">删除</el-button>
+                            </el-button-group>
+                          </template>
+                        </el-table-column>
+                      </el-table>
+                      <!-- Form -->
                               <el-dialog title="编辑环境配置" :visible.sync="dialogEnvFormVisible">
                                   <el-form :model="ruleEnvForm" :rules="EnvRules" ref="ruleEnvForm" label-width="100px" class="demo-ruleForm">
                                     <el-form-item label="名称" prop="name">
@@ -174,11 +179,6 @@
                                     </el-form-item>
                                   </el-form>
                               </el-dialog>
-                              <el-button icon="delete" size="small" type="danger" @click="handleEnvDelete(scope.$index, ruleEnvForm.id)">删除</el-button>
-                            </el-button-group>
-                          </template>
-                        </el-table-column>
-                      </el-table>
                     </template>
                   </div>
                 </div>
