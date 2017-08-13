@@ -17,3 +17,7 @@ Route::get('/', function () {
 
 // app
 Route::resource('apps', 'AppController');
+
+// env
+Route::get('envs/app/{appid}', 'EnvController@index');
+Route::resource('envs', 'EnvController');
