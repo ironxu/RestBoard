@@ -14,3 +14,13 @@
 Route::get('/', function () {
     return view('welcome');
 });
+<<<<<<< HEAD
+
+// app
+Route::resource('apps', 'AppController');
+
+// env
+Route::get('envs/app/{appid}', 'EnvController@index');
+Route::resource('envs', 'EnvController');
+=======
+>>>>>>> 5ab496cef8ac7d754357af62674ce82df6c0e132
