@@ -21,3 +21,7 @@ Route::resource('apps', 'AppController');
 // env
 Route::get('envs/app/{appid}', 'EnvController@index');
 Route::resource('envs', 'EnvController');
+
+// category
+Route::get('categories/app/{appid}', 'CategoryController@index');
+Route::resource('categories', 'CategoryController');
