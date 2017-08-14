@@ -3,8 +3,8 @@
         <el-row type="flex" >
           <el-col :span="4">
             <div class="grid-content bg-purple">
-              <el-menu default-active="2" class="el-menu-vertical-demo"  >
-                      <el-menu-item index="1-1" v-for="(item,index) in lists" :key="index" @click="switchInfo(item.id)">{{item.name}}</el-menu-item>
+              <el-menu default-active="2" class="el-menu-demo">
+                      <el-menu-item v-bind="{index:index}" v-for="(item,index) in lists" :key="index" @click="switchInfo(item.id)">{{item.name}}</el-menu-item>
                 </el-menu>
               <el-button @click="dialogFormVisible = true" class="addAppDataButton">添加APP</el-button>
               <!-- Form -->
