@@ -5,18 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
-use App\Env;
+use App\Category;
 
-class EnvController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
+     * GET /categories/app/{appid}
      * @return \Illuminate\Http\Response
      */
-    public function index($appid)
+    public function index(Request $request, $appid)
     {
-        $data = Env::where('app_id', $appid)->get()->toArray();
+        $data = Category::where('app_id', $appid)->get(['id', 'name', 'pid'])->toArray();
 
         if (empty($data)) {
             $data = [
@@ -25,30 +25,37 @@ class EnvController extends Controller
             ];
             return response($data, 404);
         }
-        return $data;
+
+        if ($request->input('type') == 'tree') {
+            return Category::formatTreeForTree($data, 0);
+        } elseif ($request->input('type') == 'cascader') {
+            return Category::formatTreeForCascader($data, 0);
+        } else {
+            return Category::formatTree($data, 0, []);
+        }
     }
 
     /**
      * Store a newly created resource in storage.
-     * POST /envs
+     * POST /categories
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $env = new Env($request->all());
-        $env->opname = 'admin';
+        $category = new Category($request->all());
+        $category->opname = 'admin';
 
         $data = [];
-        if ($env->save()) {
-            $data = ['id' => $env->id];
+        if ($category->save()) {
+            $data = ['id' => $category->id];
         }
         return $data;
     }
 
     /**
      * Display the specified resource.
-     * GET /envs/{id}
+     *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
@@ -56,39 +63,40 @@ class EnvController extends Controller
     {
         $data = [];
 
-        $app = Env::find($id);
-        if (!$app) {
+        $category = Category::find($id);
+        if (!$category) {
             $data = [
                 'message' => 'app 不存在, 请刷新页面后重试',
                 'doc_url' => request()->root() . '/help/errors/404',
             ];
             return response($data, 404);
         }
-
-        return $app;
+        return $category;
     }
 
     /**
      * Update the specified resource in storage.
-     * PUT /envs/{id}
+     * PUT /categories/{id}
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        $env = Env::find($id);
-        if (!$env) {
+        $category = Category::find($id);
+
+        if (!$category) {
             $data = [
                 'message' => 'app 不存在, 请刷新页面后重试',
                 'doc_url' => request()->root() . '/help/errors/404',
             ];
             return response($data, 404);
         }
-        
-        $ret = $env->update($request->all());
+
+        $ret = $category->update($request->all());
+
         if ($ret) {
-            return $env;
+            return $category;
         } else {
             $data = [
                 'message' => '更新失败，请稍后重试',
@@ -100,16 +108,15 @@ class EnvController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * DELETE /envs/{id}
+     * DELETE /categories/{id}
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $data = [];
+        $category = Category::find($id);
 
-        $env = Env::find($id);
-        if (!$env) {
+        if (!$category) {
             $data = [
                 'message' => 'app 不存在, 请刷新页面后重试',
                 'doc_url' => request()->root() . '/help/errors/404',
@@ -117,7 +124,7 @@ class EnvController extends Controller
             return response($data, 404);
         }
 
-        if ($env->delete()) {
+        if ($category->delete()) {
             $data = ['id' => $id];
         }
         return $data;

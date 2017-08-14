@@ -52,12 +52,8 @@ return [
     |
     */
 
-<<<<<<< HEAD
     'timezone' => 'Asia/Shanghai',
-=======
-    'timezone' => 'UTC',
->>>>>>> 5ab496cef8ac7d754357af62674ce82df6c0e132
-
+    
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
