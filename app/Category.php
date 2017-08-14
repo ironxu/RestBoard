@@ -24,8 +24,55 @@ class Category extends Model
             if ($cate['pid'] == $pid) {
                 $ret = static::formatTree($arr, $cate['id'], $path);
                 $cate['path'] = $path;
-                $cate['child'] = $ret;
+                $cate['children'] = $ret;
                 $tree[] = $cate;
+            }
+        }
+
+        return $tree;
+    }
+
+    // 格式化无限分类树, 用于Tree
+    public static function formatTreeForTree($arr, $pid)
+    {
+        $tree = [];
+
+        foreach ($arr as $key => $cate) {
+            if ($cate['pid'] == $pid) {
+                $data = [];
+                $data['id'] = $cate['id'];
+                $data['label'] = $cate['name'];
+
+                $ret = static::formatTreeForTree($arr, $cate['id']);
+                if (!empty($ret)) {
+                    $data['children'] = $ret;
+                }
+
+                $tree[] = $data;
+            }
+        }
+
+        return $tree;
+    }
+
+    // 格式化无限分类树, 用于Cascader
+    public static function formatTreeForCascader($arr, $pid)
+    {
+        $tree = [];
+
+        foreach ($arr as $key => $cate) {
+            if ($cate['pid'] == $pid) {
+                $data = [];
+                $data['id'] = $cate['id'];
+                $data['value'] = $cate['id'];
+                $data['label'] = $cate['name'];
+
+                $ret = static::formatTreeForCascader($arr, $cate['id']);
+                if (!empty($ret)) {
+                    $data['children'] = $ret;
+                }
+
+                $tree[] = $data;
             }
         }
 

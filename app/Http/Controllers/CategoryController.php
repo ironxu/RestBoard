@@ -14,9 +14,9 @@ class CategoryController extends Controller
      * GET /categories/app/{appid}
      * @return \Illuminate\Http\Response
      */
-    public function index($appid)
+    public function index(Request $request, $appid)
     {
-        $data = Category::where('app_id', $appid)->get()->toArray();
+        $data = Category::where('app_id', $appid)->get(['id', 'name', 'pid'])->toArray();
 
         if (empty($data)) {
             $data = [
@@ -25,7 +25,14 @@ class CategoryController extends Controller
             ];
             return response($data, 404);
         }
-        return Category::formatTree($data, 0, []);
+
+        if ($request->input('type') == 'tree') {
+            return Category::formatTreeForTree($data, 0);
+        } elseif ($request->input('type') == 'cascader') {
+            return Category::formatTreeForCascader($data, 0);
+        } else {
+            return Category::formatTree($data, 0, []);
+        }
     }
 
     /**
