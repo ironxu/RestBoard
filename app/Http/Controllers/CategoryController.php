@@ -20,7 +20,7 @@ class CategoryController extends Controller
 
         if (empty($data)) {
             $data = [
-                'message' => 'app 没有环境信息, 请先添加',
+                'message' => 'app 没有分类信息, 请先添加',
                 'doc_url' => request()->root() . '/help/errors/404',
             ];
             return response($data, 404);
