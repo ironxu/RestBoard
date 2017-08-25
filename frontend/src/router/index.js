@@ -20,6 +20,8 @@ import app from '../components/app/app.vue'
 import doc from '../components/doc/doc.vue'
 import request from '../components/request/request.vue'
 
+import common from '../common/common.js'
+Vue.prototype.$common = common
 export default new Router({
   routes: [{
     path: '/',

@@ -1,5 +1,5 @@
 <template>
-    <el-dialog title="添加分类信息" :visible.sync="isShow">
+    <el-dialog title="添加分类信息" :visible="isShow">
         <el-form :model="categoryForm" :rules="categoryRules" ref="categoryForm" label-width="100px" class="demo-ruleForm">
             <el-form-item label="名称" prop="name">
                 <el-input v-model="categoryForm.name"></el-input>
@@ -30,13 +30,36 @@ export default {
   data () {
     return {
       categoryForm: {},
-      categoryRules: {}
+      categoryRules: {},
+      options: []
     }
   },
   props: ['isShow'],
-  watch: {
-    isShow: function (now, old) {
-      console.log(now, old)
+  created(){
+    this.getCascader();
+  },
+  methods:{
+    // 获取级联数据
+    getCascader(){
+      var url = this.$common.baseUrl  + '/categories/app/4?type=cascader'
+      this.$http.get(url).then(function (res) {
+        // console.log(res.body)
+        if(res.status !== 200){
+          this.$common.errorMsg(res.status);
+          return;
+        }
+
+        this.options = res.body;
+      })
+    },
+    handleChange(){
+      console.log(1);
+    },
+    resetCategoryForm(formName){
+
+    },
+    submitEditCategoryForm(formName,id){
+
     }
   }
 }
