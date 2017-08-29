@@ -1,5 +1,5 @@
 <template>
-  <div class="topHeight">
+  <div>
     <el-row type="flex">
       <el-col :span="4">
         <div class="grid-content bg-purple">
@@ -173,9 +173,7 @@
             <div class="divider"></div>
             <div class="app-category">
               <div class="app-category-header">
-                <div class="app-name-header">分类信息</div>
-                <el-button icon="plus" size="small" @click="dialogCategoryFormVisible = true">添加分类</el-button>
-                <add-category :isShow="dialogCategoryFormVisible"></add-category>
+                <add-category :appId="currentAppID"></add-category>
               </div>
               <el-row>
                 <el-col :span="10">
@@ -204,7 +202,6 @@ export default {
       isInputEmpty: false,
       dialogFormVisible: false,
       dialogEnvFormVisible: false,
-      dialogCategoryFormVisible: false,
       currentAppID: 0,
       currentEnvId: 0,
       ruleForm: {
@@ -260,10 +257,10 @@ export default {
   methods: {
     // 获取APP导航菜单信息
     getAppLists () {
-      var url = 'http://rb.local.com/apps'
+      var url = this.$common.baseUrl + '/apps'
       this.$http.get(url).then(function (res) {
         if (res.status !== 200) {
-          this.errorMessage(res.status)
+          this.$common.errorMsg(res.status)
           return false
         }
         var data = res.body || []
@@ -274,23 +271,7 @@ export default {
         }
       })
     },
-    // 错误信息提示
-    errorMessage (msg) {
-      this.$message({
-        showClose: true,
-        message: msg,
-        type: 'error',
-        duration: 3000
-      })
-    },
-    // 成功信息提示
-    successMessage ($msg) {
-      $msg = $msg || '添加成功'
-      this.$message({
-        type: 'success',
-        message: $msg
-      })
-    },
+    
     // 提交APP表单
     submitAppForm (formName) {
       this.$refs[formName].validate((valid) => {
@@ -298,7 +279,7 @@ export default {
           this.dialogFormVisible = false
           this.addAppData()
         } else {
-          this.errorMessage('提交APP信息失败')
+          this.$common.errorMsg('提交APP信息失败')
           return false
         }
       })
@@ -309,13 +290,13 @@ export default {
     },
     // 添加APP数据
     addAppData () {
-      var url = 'http://rb.local.com/apps'
+      var url = this.$common.baseUrl +  '/apps'
       this.$http.post(url, { name: this.ruleForm.name, description: this.ruleForm.description, remark: this.ruleForm.remark }, { emulateJSON: true }).then(function (res) {
         if (res.status === 200 && res.body.id) {
-          this.successMessage('APP添加成功')
+          this.$common.successMsg('APP添加成功')
           this.getAppLists()
         } else {
-          this.errorMessage(res.status)
+          this.$common.errorMsg(res.status)
         }
       })
       this.resetAppFrom()
@@ -323,29 +304,29 @@ export default {
     // 切换APP导航菜单
     switchInfo (id) {
       this.currentAppID = id
-      var url = 'http://rb.local.com/apps/' + id
+      var url = this.$common.baseUrl + '/apps/' + id
       this.$http.get(url).then(function (res) {
         if (res.status === 200) {
           this.detailInfo = res.body
           this.getEnvData(id)
           this.getCategoryMenuData(id)
         } else {
-          this.errorMessage(res.status)
+          this.$common.errorMsg(res.status)
         }
       })
     },
     //  获取环境配置信息
     getEnvData (id) {
-      var url = 'http://rb.local.com/envs/app/' + id
+      var url = this.$common.baseUrl + '/envs/app/' + id
       this.$http.get(url).then(function (res) {
         if (res.status === 200) {
           this.envTableData = res.body
         } else {
-          this.errorMessage(res.status)
+          this.$common.errorMsg(res.status)
         }
       }, function (res) {
         this.envTableData = []
-        this.errorMessage(res.status)
+        this.$common.errorMsg(res.status)
       })
     },
     // 重置环境信息表单
@@ -359,34 +340,34 @@ export default {
           this.dialogEnvFormVisible = false
           this.addEnvData()
         } else {
-          this.errorMessage('提交环境配置失败')
+          this.$common.errorMsg('提交环境配置失败')
           return false
         }
       })
     },
     // 添加环境配置
     addEnvData () {
-      var url = 'http://rb.local.com/envs'
+      var url = this.$common.baseUrl + '/envs'
       this.$http.post(url, { name: this.ruleEnvForm.name, app_id: this.currentAppID, url: this.ruleEnvForm.url, remark: this.ruleEnvForm.remark, host: this.ruleEnvForm.host, color: this.ruleEnvForm.color }, { emulateJSON: true }).then(function (res) {
         if (res.status === 200 && res.body.id) {
-          this.successMessage('添加环境配置成功')
+          this.$common.successMsg('添加环境配置成功')
           this.getEnvData(this.currentAppID)
           return false
         }
-        this.errorMessage(res.status)
+        this.$common.errorMsg(res.status)
       })
       this.resetEnvForm()
     },
     // 删除APP信息
     deleteAppData (id) {
-      var url = 'http://rb.local.com/apps/' + id
+      var url = this.$common.baseUrl + '/apps/' + id
       this.$http.delete(url).then(function (res) {
         if (res.status === 200 && res.body.id) {
-          this.successMessage('删除APP数据成功')
+          this.$common.successMsg('删除APP数据成功')
           this.getAppLists()
           return false
         }
-        this.errorMessage(res.status)
+        this.$common.errorMsg(res.status)
       })
     },
     // 提交修改的APP信息
@@ -397,32 +378,32 @@ export default {
           this.addEditAppData(id)
           return true
         }
-        this.errorMessage('提交修改的APP信息失败')
+        this.$common.errorMsg('提交修改的APP信息失败')
       })
     },
     // 添加修改的APP信息
     addEditAppData (id) {
-      var url = 'http://rb.local.com/apps/' + id
+      var url = this.$common.baseUrl + '/apps/' + id
       this.$http.put(url, { name: this.detailInfo.name, description: this.detailInfo.description, remark: this.detailInfo.remark }, { emulateJSON: true }).then(function (res) {
         if (res.status === 200 && res.body.id) {
-          this.successMessage('修改APP信息成功')
+          this.$common.successMsg('修改APP信息成功')
           this.getAppLists()
           return true
         }
-        this.errorMessage(res.status)
+        this.$common.errorMsg(res.status)
       })
       // this.resetAppFrom()
     },
     // 删除环境配置信息
     handleEnvDelete (index, id) {
-      var url = 'http://rb.local.com/envs/' + id
+      var url = this.$common.baseUrl + '/envs/' + id
       this.$http.delete(url).then(function (res) {
         if (res.status === 200 && res.body.id) {
-          this.successMessage('删除环境信息成功')
+          this.$common.successMsg('删除环境信息成功')
           this.getEnvData(this.currentAppID)
           return
         }
-        this.errorMessage(res.status)
+        this.$common.errorMsg(res.status)
       })
     },
     // 提交修改的环境信息
@@ -433,19 +414,19 @@ export default {
           this.addEditEnvData(id)
           return
         }
-        this.errorMessage('提交修改的环境信息失败')
+        this.$common.errorMsg('提交修改的环境信息失败')
       })
     },
     // 添加修改的环境信息
     addEditEnvData (id) {
-      var url = 'http://rb.local.com/envs/' + id
+      var url = this.$common.baseUrl + '/envs/' + id
       this.$http.put(url, { name: this.ruleEnvForm.name, app_id: this.currentAppID, url: this.ruleEnvForm.url, remark: this.ruleEnvForm.remark, host: this.ruleEnvForm.host, color: this.ruleEnvForm.color }, { emulateJSON: true }).then(function (res) {
         if (res.status === 200 && res.body.id) {
-          this.successMessage('添加修改的环境信息成功')
+          this.$common.successMsg('添加修改的环境信息成功')
           this.getEnvData(this.currentAppID)
           return
         }
-        this.errorMessage(res.status)
+        this.$common.errorMsg(res.status)
       })
       // this.resetEnvForm()
     },
@@ -459,18 +440,18 @@ export default {
     },
     // 获取树形菜单信息
     getCategoryMenuData (appId) {
-      var url = 'http://rb.local.com/categories/app/' + appId + '?type=tree'
+      var url = this.$common.baseUrl + '/categories/app/' + appId + '?type=tree'
       console.log(url)
       this.$http.get(url).then(function (res) {
         if (res.status !== 200) {
-          this.errorMessage(res.status)
+          this.$common.errorMsg(res.status)
           this.categoryMenuData = []
           return false
         }
         this.categoryMenuData = res.body
         console.log(this.categoryMenuData)
       }, function (res) {
-        this.errorMessage(res.status)
+        this.$common.errorMsg(res.status)
         this.categoryMenuData = []
       })
     },
@@ -495,7 +476,7 @@ export default {
           </span>
           <span style="float: right; margin-right: 20px">
             <el-button-group>
-              <el-button size="small" plain icon="plus" type="info" on-click={() => this.append(store, data)}>Append</el-button>
+              <el-button size="small" plain icon="edit" type="info" on-click={() => this.append(store, data)}>edit</el-button>
               <el-button size="small" icon="delete" type="danger" on-click={() => this.remove(store, data)}>Delete</el-button>
             </el-button-group>
           </span>
@@ -507,10 +488,6 @@ export default {
 <style scoped>
 .addAppDataButton {
   width: 100%;
-}
-
-.mainContent {
-  padding-left: 10px;
 }
 
 .app-desc,

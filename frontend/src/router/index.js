@@ -13,13 +13,16 @@ import 'element-ui/lib/theme-default/index.css'
 
 // 全局样式
 import '../../static/css/site.css'
-
+//css重置
+import 'normalize.css'
 import home from '@/components/home'
 import api from '../components/api/api.vue'
 import app from '../components/app/app.vue'
 import doc from '../components/doc/doc.vue'
 import request from '../components/request/request.vue'
 
+import common from '../common/common.js'
+Vue.prototype.$common = common
 export default new Router({
   routes: [{
     path: '/',
