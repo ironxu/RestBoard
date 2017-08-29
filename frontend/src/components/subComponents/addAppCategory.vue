@@ -1,10 +1,13 @@
 <template>
-    <el-dialog title="添加分类信息" :visible="isShow">
+<div>
+    <div class="app-name-header">分类信息</div>
+    <el-button icon="plus" size="small" @click="addCategory">添加分类</el-button>
+    <el-dialog :title="categoryTitle" :visible.sync="isShow">
         <el-form :model="categoryForm" :rules="categoryRules" ref="categoryForm" label-width="100px" class="demo-ruleForm">
             <el-form-item label="名称" prop="name">
-                <el-input v-model="categoryForm.name"></el-input>
+                <el-input v-model.trim="categoryForm.name"></el-input>
             </el-form-item>
-            <el-form-item label="上级" prop="pid">
+            <el-form-item label="上级">
                 <el-cascader
                     :options="options"
                     v-model="categoryForm.pid"
@@ -13,7 +16,7 @@
                 <!-- <el-input v-model="categoryForm.pid"></el-input> -->
             </el-form-item>
             <el-form-item label="排序" prop="sort">
-                <el-input v-model="categoryForm.sort"></el-input>
+                <el-input v-model.number="categoryForm.sort"></el-input>
             </el-form-item>
             <el-form-item label="备注">
                 <el-input v-model="categoryForm.remark"></el-input>
@@ -24,21 +27,39 @@
             </el-form-item>
         </el-form>
     </el-dialog>
+</div>
 </template>
 <script>
 export default {
   data () {
     return {
-      categoryForm: {},
-      categoryRules: {},
+      isShow:false,
+      categoryTitle:'添加分类信息',
+      categoryForm: {
+        name: '',
+        sort: 0,
+        remark: ''
+      },
+      // 分类表单验证
+      categoryRules: {
+        name: [
+          { required: true, message: '请输入名称', trigger: 'blur' },
+          { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
+        ]
+      },
       options: []
     }
   },
-  props: ['isShow'],
+  props:['appId'],
   created(){
     this.getCascader();
   },
   methods:{
+    // 添加分类信息
+    addCategory(){
+      this.categoryTitle = '添加分类信息';
+      this.isShow = true;
+    },
     // 获取级联数据
     getCascader(){
       var url = this.$common.baseUrl  + '/categories/app/4?type=cascader'
@@ -48,18 +69,55 @@ export default {
           this.$common.errorMsg(res.status);
           return;
         }
-
         this.options = res.body;
       })
     },
-    handleChange(){
-      console.log(1);
-    },
-    resetCategoryForm(formName){
+    handleChange () {
 
+    },
+    resetCategoryForm (formName) {
+      // this.$refs.formName.resetFields()
+      console.log(this.$refs[formName]);
+      this.isShow = false;
     },
     submitEditCategoryForm(formName,id){
-
+      var pid = 0;
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          if(this.categoryTitle == '添加分类信息'){
+            //添加信息
+            console.log(this.categoryForm);
+            var temp = this.categoryForm.pid;
+            if(temp && temp.length !== 0){
+              pid = temp[temp.length - 1];
+            }
+            // this.categoryForm.pid = temp[temp.length - 1];
+            var url = this.$common.baseUrl + '/categories';
+            console.log(this.categoryForm);
+            this.$http.post(url, {
+              app_id: this.appId,
+              name: this.categoryForm.name,
+              pid: pid,
+              sort: this.categoryForm.sort,
+              remark: this.categoryForm.remark
+            }, { emulateJSON: true }).then(function (res) {
+              if(res.status !== 200){
+                this.$common.errorMsg(res.status);
+                return false;
+              }
+              this.$common.successMsg('添加分类信息成功');
+            })
+          } else {
+            // 修改分类信息
+            
+          }
+          location.reload();
+          this.resetCategoryForm(formName);
+        } else {
+          this.$common.errorMsg('提交环境配置失败')
+          return false
+        }
+      })
     }
   }
 }

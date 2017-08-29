@@ -1,7 +1,7 @@
 import { Message } from 'element-ui';
 // 错误信息提示
 var errorMsg = function(msg) {
-  this.$message({
+  Message({
     showClose: true,
     message: msg,
     type: 'error',
@@ -11,13 +11,14 @@ var errorMsg = function(msg) {
 // 成功信息提示
 var successMsg = function($msg) {
   $msg = $msg || '添加成功'
-  this.$message({
+  Message({
     type: 'success',
     message: $msg
   })
 }
 export default {
     baseUrl:'http://rb.local.com',
+    // baseUrl:'http://rb.ironxu.com',
     errorMsg,
     successMsg
 }

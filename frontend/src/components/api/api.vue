@@ -1,8 +1,8 @@
 <template>
     <div>
         <el-row>
-          <el-col :span="5"><div class="grid-content bg-purple"></div></el-col>
-          <el-col :span="19"><div class="grid-content bg-purple-light"></div></el-col>
+          <el-col :span="4"><div class="grid-content bg-purple"></div></el-col>
+          <el-col :span="20"  class="mainContent"><div class="grid-content bg-purple-light"></div></el-col>
         </el-row>
     </div>
 </template>

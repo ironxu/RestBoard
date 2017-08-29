@@ -1,5 +1,5 @@
 <template>
-  <div class="topHeight">
+  <div>
     <el-row type="flex">
       <el-col :span="4">
         <div class="grid-content bg-purple">
@@ -173,9 +173,7 @@
             <div class="divider"></div>
             <div class="app-category">
               <div class="app-category-header">
-                <div class="app-name-header">分类信息</div>
-                <el-button icon="plus" size="small" @click="dialogCategoryFormVisible = true">添加分类</el-button>
-                <add-category :isShow="dialogCategoryFormVisible"></add-category>
+                <add-category :appId="currentAppID"></add-category>
               </div>
               <el-row>
                 <el-col :span="10">
@@ -204,7 +202,6 @@ export default {
       isInputEmpty: false,
       dialogFormVisible: false,
       dialogEnvFormVisible: false,
-      dialogCategoryFormVisible: false,
       currentAppID: 0,
       currentEnvId: 0,
       ruleForm: {
@@ -479,7 +476,7 @@ export default {
           </span>
           <span style="float: right; margin-right: 20px">
             <el-button-group>
-              <el-button size="small" plain icon="plus" type="info" on-click={() => this.append(store, data)}>Append</el-button>
+              <el-button size="small" plain icon="edit" type="info" on-click={() => this.append(store, data)}>edit</el-button>
               <el-button size="small" icon="delete" type="danger" on-click={() => this.remove(store, data)}>Delete</el-button>
             </el-button-group>
           </span>
@@ -491,10 +488,6 @@ export default {
 <style scoped>
 .addAppDataButton {
   width: 100%;
-}
-
-.mainContent {
-  padding-left: 10px;
 }
 
 .app-desc,
