@@ -1,7 +1,16 @@
+div, p, h1, h2, h3, h3, h5, h6, button, a, input, html, body{
+    padding: 0;
+    margin: 0;
+}
+
+.mainContent {
+  padding-left: 10px;
+}
 
 .topHeight{
-    // margin-top:10px;
+   margin-top:10px;
 }
+
 .divider{
     border-top: 1px solid rgba(34,36,38,.15);
     border-bottom: 1px solid rgba(255,255,255,.1);
@@ -12,9 +21,6 @@
     text-transform: uppercase;
     letter-spacing: .05em;
     color: rgba(0,0,0,.85);
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
     font-size: 1rem;
