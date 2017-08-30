@@ -22,7 +22,7 @@
                 <el-input v-model="categoryForm.remark"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button @click="resetCategoryForm('categoryForm')">重置</el-button>
+                <el-button @click="isShow = false">重置</el-button>
                 <el-button type="primary" @click="submitEditCategoryForm('categoryForm', categoryForm.id)">保存</el-button>
             </el-form-item>
         </el-form>
@@ -34,6 +34,7 @@ export default {
   data () {
     return {
       isShow:false,
+      treeId:0,
       categoryTitle:'添加分类信息',
       categoryForm: {
         name: '',
@@ -50,11 +51,30 @@ export default {
       options: []
     }
   },
-  props:['appId'],
+  props:['appId','cateId'],
   created(){
     this.getCascader();
   },
   methods:{
+    // 获取分类表单信息
+    getCategoryForm(id){
+      var url = this.$common.baseUrl + '/categories/' + id;
+      this.$http.get(url).then(function (res) {
+        if ( res.status !== 200) {
+          this.$common.errorMsg(res.status);
+          return false;
+        }
+        // this.categoryForm
+        var temp = res.body;
+        this.treeId = temp.id;
+        this.categoryForm.name = temp.name;
+        this.categoryForm.pid = temp.path;
+        this.categoryForm.sort = temp.sort || 0;
+        this.categoryForm.remark = temp.remark || '';
+        this.categoryTitle = '编辑分类信息';
+        this.isShow = true;
+      })
+    },
     // 添加分类信息
     addCategory(){
       this.categoryTitle = '添加分类信息';
@@ -64,7 +84,7 @@ export default {
     getCascader(){
       var url = this.$common.baseUrl  + '/categories/app/4?type=cascader'
       this.$http.get(url).then(function (res) {
-        // console.log(res.body)
+        //// console.log(res.body)
         if(res.status !== 200){
           this.$common.errorMsg(res.status);
           return;
@@ -77,23 +97,25 @@ export default {
     },
     resetCategoryForm (formName) {
       // this.$refs.formName.resetFields()
-      console.log(this.$refs[formName]);
+      //console.log(this.$refs[formName]);
       this.isShow = false;
     },
     submitEditCategoryForm(formName,id){
       var pid = 0;
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          var temp = this.categoryForm.pid;
+          if(temp && temp.length !== 0){
+              pid = temp[temp.length - 1];
+          }
+
           if(this.categoryTitle == '添加分类信息'){
             //添加信息
-            console.log(this.categoryForm);
-            var temp = this.categoryForm.pid;
-            if(temp && temp.length !== 0){
-              pid = temp[temp.length - 1];
-            }
+            //console.log(this.categoryForm);
+            
             // this.categoryForm.pid = temp[temp.length - 1];
             var url = this.$common.baseUrl + '/categories';
-            console.log(this.categoryForm);
+            //console.log(this.categoryForm);
             this.$http.post(url, {
               app_id: this.appId,
               name: this.categoryForm.name,
@@ -109,15 +131,32 @@ export default {
             })
           } else {
             // 修改分类信息
+            var url = this.$common.baseUrl + '/categories/' + this.treeId;
+            this.$http.put(url,{
+              name: this.categoryForm.name,
+              pid: pid,
+              sort: this.categoryForm.sort,
+              remark: this.categoryForm.remark
+            }, { emulateJSON: true }).then(function (res) {
+              if(res.status !== 200){
+                this.$common.errorMsg(res.status);
+                return false;
+              }
+              this.$common.successMsg('修改分类信息成功');
+              this.refreshCategory();
+            })
             
           }
-          location.reload();
           this.resetCategoryForm(formName);
         } else {
           this.$common.errorMsg('提交环境配置失败')
           return false
         }
       })
+    },
+    refreshCategory(){
+      this.$emit('refreshCate');
+      //console.log('refresh')
     }
   }
 }

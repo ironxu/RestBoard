@@ -75,14 +75,14 @@
             <div class="app-env">
               <div>
                 <div class="app-env-header">
-                  <environment-info :appId="currentAppID"></environment-info>
+                  <environment-info :appId="currentAppID" ref="environmentDom"></environment-info>
                 </div>
               </div>
             </div>
             <div class="divider"></div>
             <div class="app-category">
               <div class="app-category-header">
-                <category-info :appId="currentAppID"></category-info>
+                <category-info :appId="currentAppID" :cateId="cateId" ref="categoryDom" @refreshCate="refreshCategory"></category-info>
               </div>
               <el-row>
                 <el-col :span="10">
@@ -115,6 +115,8 @@ export default {
       dialogFormVisible: false,
       currentAppID: 0,
       currentEnvId: 0,
+      cateId:0,
+      envTableData:[],
       ruleForm: {
         name: '',
         description: '',
@@ -142,6 +144,7 @@ export default {
   created () {
     this.getAppLists()
   },
+
   methods: {
     // 获取APP导航菜单信息
     getAppLists () {
@@ -204,6 +207,7 @@ export default {
         if (res.status === 200) {
           this.detailInfo = res.body
           // this.getEnvData(id)
+          this.$refs.environmentDom.getEnvData(id);
           this.getCategoryMenuData(id)
         } else {
           this.$common.errorMsg(res.status)
@@ -222,34 +226,56 @@ export default {
         this.$common.errorMsg(res.status)
       })
     },
+    //  获取环境配置信息
+    getEnvData (id) {
+      var url = this.$common.baseUrl + '/envs/app/' + id;
+      this.$http.get(url).then(function (res) {
+        if (res.status === 200) {
+          this.envTableData = res.body
+        } else {
+          this.$common.errorMsg(res.status)
+        }
+      }, function (res) {
+        this.envTableData = []
+        this.$common.errorMsg(res.status)
+      })
+    },
+    refreshCategory(){
+      this.getCategoryMenuData(this.currentAppID);
+    },
     // 获取树形菜单信息
     getCategoryMenuData (appId) {
       var url = this.$common.baseUrl + '/categories/app/' + appId + '?type=tree'
-      console.log(url)
       this.$http.get(url).then(function (res) {
         if (res.status !== 200) {
           this.$common.errorMsg(res.status)
           this.categoryMenuData = []
           return false
         }
+        console.log(res.body, new Date())
         this.categoryMenuData = res.body
-        console.log(this.categoryMenuData)
       }, function (res) {
         this.$common.errorMsg(res.status)
         this.categoryMenuData = []
       })
     },
-    // 添加树形菜单节点
-    append (store, data) {
-      store.append({
-        id: id++,
-        label: 'test',
-        children: []
-      }, data)
+    // 编辑树形菜单节点
+    editCategory (data) {
+      this.cateId = data.id;
+      this.$refs.categoryDom.getCategoryForm(data.id);
     },
     // 删除树形菜单节点
-    remove (store, data) {
-      store.remove(data)
+    remove ( data) {
+      // store.remove(data.id);
+      var url = this.$common.baseUrl + '/categories/' + data.id;
+      this.$http.delete(url).then(function (res) {
+        if(res.status !== 200){
+          this.$common.errorMsg(res.status);
+          return false;
+        }
+        this.$common.successMsg('删除分类信息成功');
+        this.refreshCategory();
+      })
     },
     // 渲染树形菜单
     renderContent (h, { node, data, store }) {
@@ -260,8 +286,8 @@ export default {
           </span>
           <span style="float: right; margin-right: 20px">
             <el-button-group>
-              <el-button size="small" plain icon="edit" type="info" on-click={() => this.append(store, data)}>edit</el-button>
-              <el-button size="small" icon="delete" type="danger" on-click={() => this.remove(store, data)}>Delete</el-button>
+              <el-button size="small" plain icon="edit" type="info" on-click={() => this.editCategory( data)}>edit </el-button>
+              <el-button size="small" icon="delete" type="danger" on-click={() => this.remove(data)}> Delete </el-button>
             </el-button-group>
           </span>
         </span>)

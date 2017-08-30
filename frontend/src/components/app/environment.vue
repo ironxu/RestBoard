@@ -2,10 +2,9 @@
     <div>
         <div>
             <div class="app-name-header other">环境信息</div>
-            <el-button icon="plus" size="small" @click="isShow = true">添加环境</el-button>
+            <el-button icon="plus" size="small" @click="addEnvData">添加环境</el-button>
         </div>
-        <div>
-          
+        <div>   
           <!-- Form -->
           <el-dialog :title="envTitle" :visible.sync="isShow">
             <el-form :model="ruleEnvForm" :rules="EnvRules" ref="ruleEnvForm" label-width="100px" class="demo-ruleForm">
@@ -76,9 +75,10 @@
     export default{
         data () {
             return {
+                id:0,
                 envTitle:'添加环境配置',
+                envTableData:[],
                 isShow:false,
-                envTableData: [],
                   // 环境信息表单验证
                   EnvRules: {
                     name: [
@@ -103,11 +103,14 @@
                   }
             }
         },
-        created(){
-            this.getEnvData();
-        },
         props:['appId'],
         methods: {
+            // 添加环境信息
+            addEnvData () {
+              this.envTitle = '添加环境配置';
+              // this.resetEnvForm('ruleEnvForm');
+              this.isShow = true;
+            },
             // 重置环境信息表单
             resetEnvForm (formName) {
               this.$refs[formName].resetFields()
@@ -116,9 +119,10 @@
             submitEnvForm (formName,id) {
               this.$refs[formName].validate((valid) => {
                 if (valid) {
-                  this.dialogEnvFormVisible = false
+                  this.isShow = false
                   if(this.envTitle === '添加环境配置'){
-                      var url = this.$common.baseUrl + '/envs'
+                      var url = this.$common.baseUrl + '/envs';
+
                       this.$http.post(url, { name: this.ruleEnvForm.name, app_id: this.appId, url: this.ruleEnvForm.url, remark: this.ruleEnvForm.remark, host: this.ruleEnvForm.host, color: this.ruleEnvForm.color }, { emulateJSON: true }).then(function (res) {
                         if (res.status === 200 && res.body.id) {
                           this.$common.successMsg('添加环境配置成功')
@@ -127,7 +131,7 @@
                         }
                         this.$common.errorMsg(res.status)
                       })
-                      this.resetEnvForm()
+                      this.resetEnvForm(formName);
                   } else {
                       var url = this.$common.baseUrl + '/envs/' + id
                       this.$http.put(url, { name: this.ruleEnvForm.name, app_id: this.appId, url: this.ruleEnvForm.url, remark: this.ruleEnvForm.remark, host: this.ruleEnvForm.host, color: this.ruleEnvForm.color }, { emulateJSON: true }).then(function (res) {
@@ -151,7 +155,7 @@
               this.$http.delete(url).then(function (res) {
                 if (res.status === 200 && res.body.id) {
                   this.$common.successMsg('删除环境信息成功')
-                  this.getEnvData(this.appId)
+                  // this.getEnvData(this.appId)
                   return
                 }
                 this.$common.errorMsg(res.status)
@@ -159,15 +163,16 @@
             },
             // 启动编辑环境信息
             startEditEnvData (row) {
+              this.envTitle = "编辑环境配置"
               // console.log(row)
               for (var k in row) {
                 this.ruleEnvForm[k] = row[k]
               }
-              this.dialogEnvFormVisible = true
+              this.isShow = true
             },
             //  获取环境配置信息
             getEnvData (id) {
-              var url = this.$common.baseUrl + '/envs/app/' + id
+              var url = this.$common.baseUrl + '/envs/app/' + id;
               this.$http.get(url).then(function (res) {
                 if (res.status === 200) {
                   this.envTableData = res.body
