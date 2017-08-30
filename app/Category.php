@@ -78,4 +78,16 @@ class Category extends Model
 
         return $tree;
     }
+
+    // 格式化无限分类树
+    public static function formatForPath($arr, $id, $path = [])
+    {
+        array_unshift($path, $arr[$id]['pid']);
+
+        if ($arr[$id]['pid'] != 0) {
+            $path = static::formatForPath($arr, $arr[$id]['pid'], $path);
+        }
+
+        return $path;
+    }
 }

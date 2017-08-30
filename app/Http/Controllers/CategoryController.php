@@ -71,6 +71,14 @@ class CategoryController extends Controller
             ];
             return response($data, 404);
         }
+
+        $app_id = $category['app_id'];
+        $allCategories = Category::where('app_id', $app_id)->get(['id', 'name', 'pid'])->toArray();
+        
+        $allCategories = array_column($allCategories, null, 'id');
+        $path = Category::formatForPath($allCategories, $id);
+        $category['path'] = $path;
+
         return $category;
     }
 
