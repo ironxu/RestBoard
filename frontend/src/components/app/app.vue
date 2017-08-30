@@ -20,7 +20,7 @@
                 <el-input v-model="ruleForm.remark"></el-input>
               </el-form-item>
               <el-form-item>
-                <el-button @click="resetAppFrom('ruleForm')">重置</el-button>
+                <el-button @click="resetAppForm('ruleForm')">重置</el-button>
                 <el-button type="primary" @click="submitAppForm('ruleForm')">提交</el-button>
               </el-form-item>
             </el-form>
@@ -37,25 +37,26 @@
                 <div class="app-name-header">{{detailInfo.name}}</div>
                 <el-button-group>
                   <el-button icon="edit" size="small" @click="dialogFormVisible = true">编辑</el-button>
-                  <!-- Form -->
-                  <el-dialog title="编辑APP" :visible.sync="dialogFormVisible">
-                    <el-form :model="detailInfo" :rules="rules" ref="detailInfo" label-width="100px" class="demo-ruleForm">
-                      <el-form-item label="名称" prop="name">
-                        <el-input v-model="detailInfo.name"></el-input>
-                      </el-form-item>
-                      <el-form-item label="描述" prop="description">
-                        <el-input v-model="detailInfo.description"></el-input>
-                      </el-form-item>
-                      <el-form-item label="备注">
-                        <el-input v-model="detailInfo.remark"></el-input>
-                      </el-form-item>
-                      <el-form-item>
-                        <el-button type="primary" @click="submitEditAppForm('detailInfo',detailInfo.id)">保存</el-button>
-                      </el-form-item>
-                    </el-form>
-                  </el-dialog>
                   <el-button icon="delete" size="small" type="danger" @click="deleteAppData(detailInfo.id)">删除</el-button>
                 </el-button-group>
+                <!-- Form -->
+                <el-dialog :title="appTitle" :visible.sync="dialogFormVisible">
+                  <el-form :model="detailInfo" :rules="rules" ref="detailInfo" label-width="100px" class="demo-ruleForm">
+                    <el-form-item label="名称" prop="name">
+                      <el-input v-model="detailInfo.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="描述" prop="description">
+                      <el-input v-model="detailInfo.description"></el-input>
+                    </el-form-item>
+                    <el-form-item label="备注">
+                      <el-input v-model="detailInfo.remark"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                      <el-button @click="resetAppForm('detailInfo')">重置</el-button>
+                      <el-button type="primary" @click="submitAppForm('detailInfo',detailInfo.id)">提交</el-button>
+                    </el-form-item>
+                  </el-form>
+                </el-dialog>
               </div>
               <div class="app-desc">
                 <div class="app-name-header">APP 描述</div>
@@ -74,106 +75,14 @@
             <div class="app-env">
               <div>
                 <div class="app-env-header">
-                  <div class="app-name-header">环境信息</div>
-                  <el-button icon="plus" size="small" @click="dialogEnvFormVisible = true">添加环境</el-button>
-                  <!-- Form -->
-                  <el-dialog title="添加环境配置" :visible.sync="dialogEnvFormVisible">
-                    <el-form :model="ruleEnvForm" :rules="EnvRules" ref="ruleEnvForm" label-width="100px" class="demo-ruleForm">
-                      <el-form-item label="名称" prop="name">
-                        <el-input v-model="ruleEnvForm.name"></el-input>
-                      </el-form-item>
-                      <el-form-item label="Url" prop="url">
-                        <el-input v-model="ruleEnvForm.url"></el-input>
-                      </el-form-item>
-                      <el-form-item label="host" prop="host">
-                        <el-input v-model="ruleEnvForm.host"></el-input>
-                      </el-form-item>
-                      <el-form-item label="颜色">
-                        <div class="block">
-                          <el-color-picker v-model="ruleEnvForm.color"></el-color-picker>
-                        </div>
-                      </el-form-item>
-                      <el-form-item label="备注">
-                        <el-input v-model="ruleEnvForm.remark"></el-input>
-                      </el-form-item>
-                      <el-form-item>
-                        <el-button @click="resetEnvForm('ruleEnvForm')">重置</el-button>
-                        <el-button type="primary" @click="submitEnvForm('ruleEnvForm')">提交</el-button>
-                      </el-form-item>
-                    </el-form>
-                  </el-dialog>
+                  <environment-info :appId="currentAppID"></environment-info>
                 </div>
-                <template>
-                  <el-table :data="envTableData" border fit stripe style="width: 95%">
-                    <el-table-column label="名称" width="150">
-                      <template scope="scope">
-                        <span>{{ scope.row.name}}</span>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="Url" min-width="200">
-                      <template scope="scope">
-                        <span>{{ scope.row.url}}</span>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="Host" min-width="200">
-                      <template scope="scope">
-                        <span>{{ scope.row.host}}</span>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="颜色" width="70" align="center">
-                      <template scope="scope">
-                        <div class="block">
-                          <div class="app-show-color" :style="{'background-color':scope.row.color}"></div>
-                        </div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="备注" width="150">
-                      <template scope="scope">
-                        <span>{{ scope.row.remark}}</span>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="操作" width="200">
-                      <template scope="scope">
-                        <el-button-group>
-                          <el-button icon="edit" size="small" @click="startEditEnvData(scope.row)">编辑</el-button>
-                          <el-button icon="delete" size="small" type="danger" @click="handleEnvDelete(scope.$index, ruleEnvForm.id)">删除</el-button>
-                        </el-button-group>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                  <!-- Form -->
-                  <el-dialog title="编辑环境配置" :visible.sync="dialogEnvFormVisible">
-                    <el-form :model="ruleEnvForm" :rules="EnvRules" ref="ruleEnvForm" label-width="100px" class="demo-ruleForm">
-                      <el-form-item label="名称" prop="name">
-                        <el-input v-model="ruleEnvForm.name"></el-input>
-                      </el-form-item>
-                      <el-form-item label="Url" prop="url">
-                        <el-input v-model="ruleEnvForm.url"></el-input>
-                      </el-form-item>
-                      <el-form-item label="host" prop="host">
-                        <el-input v-model="ruleEnvForm.host"></el-input>
-                      </el-form-item>
-                      <el-form-item label="颜色">
-                        <div class="block">
-                          <el-color-picker v-model="ruleEnvForm.color"></el-color-picker>
-                        </div>
-                      </el-form-item>
-                      <el-form-item label="备注">
-                        <el-input v-model="ruleEnvForm.remark"></el-input>
-                      </el-form-item>
-                      <el-form-item>
-                        <el-button @click="resetEnvForm('ruleEnvForm')">重置</el-button>
-                        <el-button type="primary" @click="submitEditEnvForm('ruleEnvForm', ruleEnvForm.id)">保存</el-button>
-                      </el-form-item>
-                    </el-form>
-                  </el-dialog>
-                </template>
               </div>
             </div>
             <div class="divider"></div>
             <div class="app-category">
               <div class="app-category-header">
-                <add-category :appId="currentAppID"></add-category>
+                <category-info :appId="currentAppID"></category-info>
               </div>
               <el-row>
                 <el-col :span="10">
@@ -191,17 +100,19 @@
 
 <script>
 var id = 1000
-import appCategory from '../subComponents/addAppCategory.vue'
+import appCategory from './category.vue';
+import environment from './environment.vue';
 export default {
   components: {
-    'add-category': appCategory
+    'category-info': appCategory,
+    'environment-info':environment
   },
   data () {
     return {
+      appTitle: '添加APP',
       lists: [],
       isInputEmpty: false,
       dialogFormVisible: false,
-      dialogEnvFormVisible: false,
       currentAppID: 0,
       currentEnvId: 0,
       ruleForm: {
@@ -221,29 +132,6 @@ export default {
         ]
       },
       detailInfo: {},
-      envTableData: [],
-      // 环境信息表单验证
-      EnvRules: {
-        name: [
-          { required: true, message: '请输入名称', trigger: 'blur' },
-          { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
-        ],
-        url: [
-          { required: true, message: '请输入url', trigger: 'blur' },
-          { min: 1, max: 200, message: '长度在 1 到 200 个字符', trigger: 'blur' }
-        ],
-        host: [
-          { required: true, message: '请输入url', trigger: 'blur' },
-          { min: 1, max: 100, message: '长度在 1 到 200 个字符', trigger: 'blur' }
-        ]
-      },
-      ruleEnvForm: {
-        name: '',
-        url: '',
-        host: '',
-        color: '#fff',
-        remark: ''
-      },
       categoryMenuData: [],
       defaultProps: {
         children: 'children',
@@ -271,35 +159,42 @@ export default {
         }
       })
     },
-    
     // 提交APP表单
-    submitAppForm (formName) {
+    submitAppForm (formName,id) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.dialogFormVisible = false
-          this.addAppData()
+          if(this.appTitle == '添加APP'){
+            var url = this.$common.baseUrl +  '/apps'
+            this.$http.post(url, { name: this.ruleForm.name, description: this.ruleForm.description, remark: this.ruleForm.remark }, { emulateJSON: true }).then(function (res) {
+              if (res.status === 200 && res.body.id) {
+                this.$common.successMsg('APP添加成功')
+                this.getAppLists()
+              } else {
+                this.$common.errorMsg(res.status)
+              }
+            })
+            
+          } else {
+              var url = this.$common.baseUrl + '/apps/' + id
+              this.$http.put(url, { name: this.detailInfo.name, description: this.detailInfo.description, remark: this.detailInfo.remark }, { emulateJSON: true }).then(function (res) {
+                if (res.status === 200 && res.body.id) {
+                  this.$common.successMsg('修改APP信息成功')
+                  this.getAppLists()
+                  return true
+                }
+                this.$common.errorMsg(res.status)
+              })
+          }
+          this.resetAppForm()
         } else {
           this.$common.errorMsg('提交APP信息失败')
-          return false
         }
       })
     },
     // 重置APP表单
     resetAppForm (formName) {
-      this.$refs[formName].resetFields()
-    },
-    // 添加APP数据
-    addAppData () {
-      var url = this.$common.baseUrl +  '/apps'
-      this.$http.post(url, { name: this.ruleForm.name, description: this.ruleForm.description, remark: this.ruleForm.remark }, { emulateJSON: true }).then(function (res) {
-        if (res.status === 200 && res.body.id) {
-          this.$common.successMsg('APP添加成功')
-          this.getAppLists()
-        } else {
-          this.$common.errorMsg(res.status)
-        }
-      })
-      this.resetAppFrom()
+       this.$refs[formName].resetFields();
     },
     // 切换APP导航菜单
     switchInfo (id) {
@@ -308,55 +203,12 @@ export default {
       this.$http.get(url).then(function (res) {
         if (res.status === 200) {
           this.detailInfo = res.body
-          this.getEnvData(id)
+          // this.getEnvData(id)
           this.getCategoryMenuData(id)
         } else {
           this.$common.errorMsg(res.status)
         }
       })
-    },
-    //  获取环境配置信息
-    getEnvData (id) {
-      var url = this.$common.baseUrl + '/envs/app/' + id
-      this.$http.get(url).then(function (res) {
-        if (res.status === 200) {
-          this.envTableData = res.body
-        } else {
-          this.$common.errorMsg(res.status)
-        }
-      }, function (res) {
-        this.envTableData = []
-        this.$common.errorMsg(res.status)
-      })
-    },
-    // 重置环境信息表单
-    resetEnvForm (formName) {
-      this.$refs[formName].resetFields()
-    },
-    // 提交环境配置表单
-    submitEnvForm (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.dialogEnvFormVisible = false
-          this.addEnvData()
-        } else {
-          this.$common.errorMsg('提交环境配置失败')
-          return false
-        }
-      })
-    },
-    // 添加环境配置
-    addEnvData () {
-      var url = this.$common.baseUrl + '/envs'
-      this.$http.post(url, { name: this.ruleEnvForm.name, app_id: this.currentAppID, url: this.ruleEnvForm.url, remark: this.ruleEnvForm.remark, host: this.ruleEnvForm.host, color: this.ruleEnvForm.color }, { emulateJSON: true }).then(function (res) {
-        if (res.status === 200 && res.body.id) {
-          this.$common.successMsg('添加环境配置成功')
-          this.getEnvData(this.currentAppID)
-          return false
-        }
-        this.$common.errorMsg(res.status)
-      })
-      this.resetEnvForm()
     },
     // 删除APP信息
     deleteAppData (id) {
@@ -369,74 +221,6 @@ export default {
         }
         this.$common.errorMsg(res.status)
       })
-    },
-    // 提交修改的APP信息
-    submitEditAppForm (formName, id) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.dialogFormVisible = false
-          this.addEditAppData(id)
-          return true
-        }
-        this.$common.errorMsg('提交修改的APP信息失败')
-      })
-    },
-    // 添加修改的APP信息
-    addEditAppData (id) {
-      var url = this.$common.baseUrl + '/apps/' + id
-      this.$http.put(url, { name: this.detailInfo.name, description: this.detailInfo.description, remark: this.detailInfo.remark }, { emulateJSON: true }).then(function (res) {
-        if (res.status === 200 && res.body.id) {
-          this.$common.successMsg('修改APP信息成功')
-          this.getAppLists()
-          return true
-        }
-        this.$common.errorMsg(res.status)
-      })
-      // this.resetAppFrom()
-    },
-    // 删除环境配置信息
-    handleEnvDelete (index, id) {
-      var url = this.$common.baseUrl + '/envs/' + id
-      this.$http.delete(url).then(function (res) {
-        if (res.status === 200 && res.body.id) {
-          this.$common.successMsg('删除环境信息成功')
-          this.getEnvData(this.currentAppID)
-          return
-        }
-        this.$common.errorMsg(res.status)
-      })
-    },
-    // 提交修改的环境信息
-    submitEditEnvForm (formName, id) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.dialogEnvFormVisible = false
-          this.addEditEnvData(id)
-          return
-        }
-        this.$common.errorMsg('提交修改的环境信息失败')
-      })
-    },
-    // 添加修改的环境信息
-    addEditEnvData (id) {
-      var url = this.$common.baseUrl + '/envs/' + id
-      this.$http.put(url, { name: this.ruleEnvForm.name, app_id: this.currentAppID, url: this.ruleEnvForm.url, remark: this.ruleEnvForm.remark, host: this.ruleEnvForm.host, color: this.ruleEnvForm.color }, { emulateJSON: true }).then(function (res) {
-        if (res.status === 200 && res.body.id) {
-          this.$common.successMsg('添加修改的环境信息成功')
-          this.getEnvData(this.currentAppID)
-          return
-        }
-        this.$common.errorMsg(res.status)
-      })
-      // this.resetEnvForm()
-    },
-    // 启动编辑环境信息
-    startEditEnvData (row) {
-      // console.log(row)
-      for (var k in row) {
-        this.ruleEnvForm[k] = row[k]
-      }
-      this.dialogEnvFormVisible = true
     },
     // 获取树形菜单信息
     getCategoryMenuData (appId) {
@@ -498,11 +282,11 @@ export default {
 .app-remark-detail {
   margin: 5px 0;
 }
-
-.app-env-header {
-  margin-bottom: 20px;
-}
 .app-category-header{
   margin: 20px 0;
 }
+.app-env-header {
+  margin-bottom: 20px;
+}
+
 </style>
