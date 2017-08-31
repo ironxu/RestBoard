@@ -26,8 +26,8 @@
                 <el-input v-model="ruleEnvForm.remark"></el-input>
               </el-form-item>
               <el-form-item>
-                <el-button @click="resetEnvForm('ruleEnvForm')">重置</el-button>
-                <el-button type="primary" @click="submitEnvForm('ruleEnvForm',ruleEnvForm.id)">提交</el-button>
+                <el-button @click="isShow = false">取消</el-button>
+                <el-button type="primary" @click="submitEnvForm('ruleEnvForm',ruleEnvForm.id)">保存</el-button>
               </el-form-item>
             </el-form>
           </el-dialog>
@@ -108,12 +108,19 @@
             // 添加环境信息
             addEnvData () {
               this.envTitle = '添加环境配置';
-              // this.resetEnvForm('ruleEnvForm');
+              this.resetEnvForm();
               this.isShow = true;
             },
             // 重置环境信息表单
-            resetEnvForm (formName) {
-              this.$refs[formName].resetFields()
+            resetEnvForm () {
+              // this.$refs[formName].resetFields()
+              this.ruleEnvForm = {
+                    name: '',
+                    url: '',
+                    host: '',
+                    color: '#fff',
+                    remark: ''
+                  }
             },
             // 提交环境配置表单
             submitEnvForm (formName,id) {
@@ -125,18 +132,18 @@
 
                       this.$http.post(url, { name: this.ruleEnvForm.name, app_id: this.appId, url: this.ruleEnvForm.url, remark: this.ruleEnvForm.remark, host: this.ruleEnvForm.host, color: this.ruleEnvForm.color }, { emulateJSON: true }).then(function (res) {
                         if (res.status === 200 && res.body.id) {
-                          this.$common.successMsg('添加环境配置成功')
+                          this.$common.successMsg('添加环境成功')
                           this.getEnvData(this.appId)
                           return false
                         }
                         this.$common.errorMsg(res.status)
                       })
-                      this.resetEnvForm(formName);
+                      this.resetEnvForm();
                   } else {
                       var url = this.$common.baseUrl + '/envs/' + id
                       this.$http.put(url, { name: this.ruleEnvForm.name, app_id: this.appId, url: this.ruleEnvForm.url, remark: this.ruleEnvForm.remark, host: this.ruleEnvForm.host, color: this.ruleEnvForm.color }, { emulateJSON: true }).then(function (res) {
                         if (res.status === 200 && res.body.id) {
-                          this.$common.successMsg('添加修改的环境信息成功')
+                          this.$common.successMsg('修改环境成功')
                           this.getEnvData(this.appId)
                           return
                         }
@@ -144,7 +151,7 @@
                       })
                   }
                 } else {
-                  this.$common.errorMsg('提交环境配置失败')
+                  this.$common.errorMsg('提交环境信息失败')
                   return false
                 }
               })

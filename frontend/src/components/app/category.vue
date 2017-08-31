@@ -22,7 +22,7 @@
                 <el-input v-model="categoryForm.remark"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button @click="isShow = false">重置</el-button>
+                <el-button @click="isShow = false">取消</el-button>
                 <el-button type="primary" @click="submitEditCategoryForm('categoryForm', categoryForm.id)">保存</el-button>
             </el-form-item>
         </el-form>
@@ -78,6 +78,7 @@ export default {
     // 添加分类信息
     addCategory(){
       this.categoryTitle = '添加分类信息';
+      this.resetForm();
       this.isShow = true;
     },
     // 获取级联数据
@@ -92,30 +93,27 @@ export default {
         this.options = res.body;
       })
     },
-    handleChange () {
-
+    handleChange (t) {
+      // console.log(t)
     },
-    resetCategoryForm (formName) {
-      // this.$refs.formName.resetFields()
-      //console.log(this.$refs[formName]);
-      this.isShow = false;
+    resetForm () {
+      this.categoryForm = {
+        name: '',
+        sort: 0,
+        remark: ''
+      }
     },
-    submitEditCategoryForm(formName,id){
+    submitEditCategoryForm (formName,id) {
       var pid = 0;
       this.$refs[formName].validate((valid) => {
         if (valid) {
           var temp = this.categoryForm.pid;
-          if(temp && temp.length !== 0){
+          if (temp && temp.length !== 0) {
               pid = temp[temp.length - 1];
           }
-
-          if(this.categoryTitle == '添加分类信息'){
+          if (this.categoryTitle == '添加分类信息') {
             //添加信息
-            //console.log(this.categoryForm);
-            
-            // this.categoryForm.pid = temp[temp.length - 1];
             var url = this.$common.baseUrl + '/categories';
-            //console.log(this.categoryForm);
             this.$http.post(url, {
               app_id: this.appId,
               name: this.categoryForm.name,
@@ -127,7 +125,8 @@ export default {
                 this.$common.errorMsg(res.status);
                 return false;
               }
-              this.$common.successMsg('添加分类信息成功');
+              this.$common.successMsg('添加分类成功');
+              this.refreshCategory();
             })
           } else {
             // 修改分类信息
@@ -142,21 +141,19 @@ export default {
                 this.$common.errorMsg(res.status);
                 return false;
               }
-              this.$common.successMsg('修改分类信息成功');
+              this.$common.successMsg('修改分类成功');
               this.refreshCategory();
-            })
-            
+            }) 
           }
-          this.resetCategoryForm(formName);
         } else {
-          this.$common.errorMsg('提交环境配置失败')
+          this.$common.errorMsg('提交分类失败')
           return false
         }
       })
+      this.isShow = false
     },
     refreshCategory(){
       this.$emit('refreshCate');
-      //console.log('refresh')
     }
   }
 }

@@ -16,7 +16,7 @@ import '../../static/css/site.css'
 //css重置
 import 'normalize.css'
 import home from '@/components/home'
-import api from '../components/api/api.vue'
+import apiList from '../components/api/apiList.vue'
 import app from '../components/app/app.vue'
 import doc from '../components/doc/doc.vue'
 import request from '../components/request/request.vue'
@@ -35,8 +35,8 @@ export default new Router({
     path: '/app',
     component: app
   }, {
-    path: '/api',
-    component: api
+    path: '/api/list/:app_id/:cate_id',
+    component: apiList
   }, {
     path: '/doc',
     component: doc
