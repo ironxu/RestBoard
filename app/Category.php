@@ -14,6 +14,8 @@ class Category extends Model
     //
     protected $fillable = ['app_id', 'name', 'pid', 'sort', 'remark', 'opname'];
 
+    protected $hidden = ['deleted_at'];
+    
     // 格式化无限分类树
     public static function formatTree($arr, $pid, $path)
     {
@@ -77,5 +79,17 @@ class Category extends Model
         }
 
         return $tree;
+    }
+
+    // 格式化无限分类树
+    public static function formatForPath($arr, $id, $path = [])
+    {
+        array_unshift($path, $arr[$id]['pid']);
+
+        if ($arr[$id]['pid'] != 0) {
+            $path = static::formatForPath($arr, $arr[$id]['pid'], $path);
+        }
+
+        return $path;
     }
 }

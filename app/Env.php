@@ -11,5 +11,7 @@ class Env extends Model
     use SoftDeletes;
     protected $dates = ['deleted_at'];
 
+    protected $hidden = ['deleted_at'];
+
     protected $fillable = ['app_id', 'name', 'url', 'host', 'color', 'remark', 'opname'];
 }

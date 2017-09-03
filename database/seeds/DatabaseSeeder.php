@@ -14,5 +14,6 @@ class DatabaseSeeder extends Seeder
         $this->call(AppTableSeeder::class);
         $this->call(EnvTableSeeder::class);
         $this->call(CategoryTableSeeder::class);
+        $this->call(ApiTableSeeder::class);
     }
 }
