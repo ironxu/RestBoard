@@ -14,6 +14,8 @@ class Category extends Model
     //
     protected $fillable = ['app_id', 'name', 'pid', 'sort', 'remark', 'opname'];
 
+    protected $hidden = ['deleted_at'];
+    
     // 格式化无限分类树
     public static function formatTree($arr, $pid, $path)
     {

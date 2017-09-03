@@ -60,6 +60,8 @@ class ApiController extends Controller
     public function show($id)
     {
         $data = Api::find($id);
+        $resp_body = $data->resp_body;
+        $data['resp_body_json'] = Api::formatJsonBody($resp_body);
 
         if (!$data) {
             $data = [
