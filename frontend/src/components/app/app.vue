@@ -207,6 +207,7 @@ export default {
     switchInfo (id,index) {
       this.activeIndex = 'index' + index
       this.currentAppID = id
+      this.$common.appId = id
       var url = this.$common.baseUrl + '/apps/' + id
       this.$http.get(url).then(function (res) {
         if (res.status === 200) {
@@ -271,7 +272,8 @@ export default {
     // 进入api列表页
     moreApi(data){
       // console.log(data.id);
-      var temp = '/api/list/' + this.currentAppID + '/' + data.id;
+      this.$common.appId = this.currentAppID;
+      var temp = '/api/list/' + data.id;
       console.log(temp);
       this.$router.push(temp);
     },
