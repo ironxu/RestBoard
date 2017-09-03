@@ -6,94 +6,85 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Category;
+use App\Api;
 
-class CategoryController extends Controller
+class ApiController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * GET /categories/app/{appid}
+     * GET apis?app_id={app_id}&cate_id={cate_id}
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, $appid)
+    public function index(Request $request)
     {
-        $data = Category::where('app_id', $appid)->get(['id', 'name', 'pid'])->toArray();
+        $app_id = $request->input('app_id');
+        $cate_id = $request->input('cate_id');
+        $data = Api::where(['cate_id' => $cate_id, 'app_id' => $app_id])->get()->toArray();
 
         if (empty($data)) {
             $data = [
-                'message' => 'app 没有分类信息, 请先添加',
+                'message' => '该分类下没有api信息, 请先添加',
                 'doc_url' => request()->root() . '/help/errors/404',
             ];
             return response($data, 404);
         }
 
-        if ($request->input('type') == 'tree') {
-            return Category::formatTreeForTree($data, 0);
-        } elseif ($request->input('type') == 'cascader') {
-            return Category::formatTreeForCascader($data, 0);
-        } else {
-            return Category::formatTree($data, 0, []);
-        }
+        return $data;
     }
 
     /**
      * Store a newly created resource in storage.
-     * POST /categories
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $category = new Category($request->all());
-        $category->opname = 'admin';
+        $api = new Api($request->all());
+        $api->opname = 'admin';
 
         $data = [];
-        if ($category->save()) {
-            $data = ['id' => $category->id];
+        if ($api->save()) {
+            $data = ['id' => $api->id];
         }
+
         return $data;
     }
 
     /**
      * Display the specified resource.
-     *
+     * GET apis/{id}
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $data = [];
+        $data = Api::find($id);
+        $resp_body = $data->resp_body;
+        $data['resp_body_json'] = Api::formatJsonBody($resp_body);
 
-        $category = Category::find($id);
-        if (!$category) {
+        if (!$data) {
             $data = [
                 'message' => 'app 不存在, 请刷新页面后重试',
                 'doc_url' => request()->root() . '/help/errors/404',
             ];
             return response($data, 404);
         }
-
-        $app_id = $category['app_id'];
-        $allCategories = Category::where('app_id', $app_id)->get(['id', 'name', 'pid'])->toArray();
-        
-        $allCategories = array_column($allCategories, null, 'id');
-        $path = Category::formatForPath($allCategories, $id);
-        $category['path'] = $path;
-
-        return $category;
+        return $data;
     }
 
     /**
      * Update the specified resource in storage.
-     * PUT /categories/{id}
+     * PUT /apis/{id}
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        $category = Category::find($id);
+        $api = Api::find($id);
 
-        if (!$category) {
+        if (!$api) {
             $data = [
                 'message' => 'app 不存在, 请刷新页面后重试',
                 'doc_url' => request()->root() . '/help/errors/404',
@@ -101,30 +92,30 @@ class CategoryController extends Controller
             return response($data, 404);
         }
 
-        $ret = $category->update($request->all());
+        $ret = $api->update($request->all());
 
         if ($ret) {
-            return $category;
+            return $api;
         } else {
             $data = [
                 'message' => '更新失败，请稍后重试',
                 'doc_url' => request()->root() . '/help/errors/404',
             ];
-            return response($app, 202);
+            return response($data, 202);
         }
     }
 
     /**
      * Remove the specified resource from storage.
-     * DELETE /categories/{id}
+     * DELETE /apis/{id}
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $category = Category::find($id);
+        $api = Api::find($id);
 
-        if (!$category) {
+        if (!$api) {
             $data = [
                 'message' => 'app 不存在, 请刷新页面后重试',
                 'doc_url' => request()->root() . '/help/errors/404',
@@ -132,7 +123,7 @@ class CategoryController extends Controller
             return response($data, 404);
         }
 
-        if ($category->delete()) {
+        if ($api->delete()) {
             $data = ['id' => $id];
         }
         return $data;
