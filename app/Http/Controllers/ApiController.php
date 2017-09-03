@@ -40,7 +40,15 @@ class ApiController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $api = new Api($request->all());
+        $api->opname = 'admin';
+
+        $data = [];
+        if ($api->save()) {
+            $data = ['id' => $api->id];
+        }
+
+        return $data;
     }
 
     /**
@@ -64,36 +72,58 @@ class ApiController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
-     *
+     * PUT /apis/{id}
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        //
+        $api = Api::find($id);
+
+        if (!$api) {
+            $data = [
+                'message' => 'app 不存在, 请刷新页面后重试',
+                'doc_url' => request()->root() . '/help/errors/404',
+            ];
+            return response($data, 404);
+        }
+
+        $ret = $api->update($request->all());
+
+        if ($ret) {
+            return $api;
+        } else {
+            $data = [
+                'message' => '更新失败，请稍后重试',
+                'doc_url' => request()->root() . '/help/errors/404',
+            ];
+            return response($data, 202);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
-     *
+     * DELETE /apis/{id}
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        //
+        $api = Api::find($id);
+
+        if (!$api) {
+            $data = [
+                'message' => 'app 不存在, 请刷新页面后重试',
+                'doc_url' => request()->root() . '/help/errors/404',
+            ];
+            return response($data, 404);
+        }
+
+        if ($api->delete()) {
+            $data = ['id' => $id];
+        }
+        return $data;
     }
 }
