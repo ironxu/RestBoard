@@ -20,7 +20,7 @@
                   <el-breadcrumb-item>{{appData.name}}</el-breadcrumb-item>
                   <!-- <el-breadcrumb-item>{{}}</el-breadcrumb-item> -->
                 </el-breadcrumb>
-                <router-link v-bind="{to:'/api/detail/' + cateId + '/' + 0}"><el-button size="small">新增Api</el-button></router-link>
+                <router-link v-bind="{to:'/api/detail/' + appId + '/' + cateId + '/' + 0}"><el-button size="small">新增Api</el-button></router-link>
                   <el-table
                     :data="tableData"
                     border
@@ -64,7 +64,7 @@
                     </el-table-column>
                     <el-table-column label="操作">
                       <template scope="scope">
-                        <router-link v-bind="{to:'/api/detail/' + cateId + '/' + scope.row.id}"><el-button size="small">编辑</el-button></router-link>
+                        <router-link v-bind="{to:'/api/detail/' + appId + '/' + cateId + '/' + scope.row.id}"><el-button size="small">编辑</el-button></router-link>
                         <el-button
                           size="small"
                           type="danger"
@@ -95,9 +95,10 @@ export default {
         }
     },
     created () {
-        this.appId = this.$common.appId;
-        console.log(this.appId)
+        this.appId = this.$route.params.app_id;
+        // console.log(this.appId)
         this.cateId = this.$route.params.cate_id;
+        console.log(this.cateId);
         // console.log(this.$route.params)
         this.getAllCategory(this.appId);
         this.getOneApp();
@@ -142,7 +143,7 @@ export default {
           this.$http.get(url).then(function (res) {
             if (res.status === 200) {
               this.appData = res.body
-              console.log(this.appData)
+              // console.log(this.appData)
             } else {
               this.$common.errorMsg(res.status)
             }
@@ -150,11 +151,11 @@ export default {
         },
         // 表格编辑
          handleEdit(index, row) {
-            console.log(index, row);
+            // console.log(index, row);
           },
         // 删除表格
           handleDelete(index, row) {
-            console.log(index, row);
+            // console.log(index, row);
           }
     }
 }

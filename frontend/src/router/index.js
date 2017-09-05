@@ -36,16 +36,16 @@ export default new Router({
     path: '/app',
     component: app
   }, {
-    path: '/api/list/:cate_id',
+    path: '/api/list/:app_id/:cate_id',
     component: apiList
   },{
-    path: '/api/detail/:cate_id/:api_id',
+    path: '/api/detail/:app_id/:cate_id/:api_id',
     component: apiDetail
   }, {
     path: '/doc',
     component: doc
   }, {
-    path: '/request/:cate_id/:api_id',
+    path: '/request/:app_id/:cate_id/:api_id',
     component: request
   }
   ]
