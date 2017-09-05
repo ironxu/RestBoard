@@ -20,6 +20,5 @@ export default {
     baseUrl:'http://rb.local.com',
     // baseUrl:'http://rb.ironxu.com',
     errorMsg,
-    successMsg,
-    appId: 4
+    successMsg
 }

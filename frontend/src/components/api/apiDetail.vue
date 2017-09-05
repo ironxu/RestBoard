@@ -18,7 +18,7 @@
             </el-breadcrumb>
             <el-button-group>
               <el-button type="danger" icon="more" @click="enterRequest">请求</el-button>
-              <el-button icon="plus"  @click="resetForm('ruleForm')">添加</el-button>
+              <el-button icon="plus"  @click="addApi">添加</el-button>
               <el-button type="danger" icon="delete" @click="deleteApiData">删除</el-button>
             </el-button-group>
         </div>
@@ -93,7 +93,7 @@ export default {
   name: 'api-detail',
   data () {
     return {
-      cateId: 1,
+      cateId: 0,
       // 该分类下的所有api
       apiTitle: '',
       apiId: 0,
@@ -134,17 +134,21 @@ export default {
     }
   },
   created () {
+    this.appId = this.$route.params.app_id;
     this.cateId = this.$route.params.cate_id;
     this.apiId = this.$route.params.api_id;
-    this.getApiList(this.cateId);
-    this.ruleForm.app_id = this.$common.appId;
+    this.ruleForm.app_id = this.appId;
     this.ruleForm.cate_id = this.cateId;
+    this.getApiList(this.cateId);
+    if (this.apiId !== 0) {
+      this.getOneApi(id);
+    }
   },
   methods: {
-    // 获取分类下的API列表
+    // 获取分类下的所有API列表
      getApiList (id) {
-        // var url = this.$common.baseUrl + 'apis?app_id=' + this.$common.appId + '&cate_id=' + this.cateId;
-        var url = this.$common.baseUrl + '/apis?app_id=' + this.$common.appId + '&cate_id=' + id;
+        // var url = this.$common.baseUrl + 'apis?app_id=' + this.appId + '&cate_id=' + this.cateId;
+        var url = this.$common.baseUrl + '/apis?app_id=' + this.appId + '&cate_id=' + id;
         // console.log(url);
         this.$http.get(url).then(function (res) {
             if (res.status !== 200) {
@@ -153,17 +157,55 @@ export default {
             }
             this.lists = res.body;
             this.activeIndex = this.apiId + '';
-        })
+        });
+    },
+    // 获取单个Api数据
+    getOneApi(id){
+      var url = this.$common.baseUrl + '/apis/' + id;
+          this.$http.get(url).then(function (res) {
+            if (res.status === 200) {
+              this.ruleForm = res.body
+              // console.log(this.appData)
+            } else {
+              this.$common.errorMsg(res.status)
+            }
+          })
     },
     submitForm (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.addApiData();
+            // 如果APIID 为0，添加数据
+            if (this.apiId === 0) {
+              this.addApiData();
+              return;
+            }
+            // 否则更新数据
+            this.updateApiData(this.apiId);
+            console.log(this.apiId);
           } else {
             this.$common.errorMsg('未输入有效信息');
             return false;
           }
         });
+      },
+      // 更新api数据
+      updateApiData (id) {
+        var url = this.$common.baseUrl + '/apis/' + id;
+        this.$http.put(url, this.ruleForm, { emulateJSON: true }).then(function (res) {
+          if(res.status !== 200){
+              this.$common.errorMsg(res.status);
+              return false;
+          }
+          this.$common.successMsg('更新Api成功');
+          this.getApiList(this.cateId);
+          this.apiTitle = this.ruleForm.name;
+          // console.log(res.body.id);
+        })
+      },
+      // 点击添加API按钮
+      addApi(){
+        this.apiId = 0;
+        this.resetForm('ruleForm')
       },
       // 添加API数据
     addApiData ( ) {
@@ -181,12 +223,27 @@ export default {
       })
     },
     resetForm (formName) {
-      this.$refs[formName].resetFields();
+      this.ruleForm = {
+          app_id: 0,
+          cate_id: 0,
+          name: '',
+          description: '',
+          method: 'GET',
+          uri: '',
+          req_header: '',
+          req_body: '',
+          resp_header: '',
+          resp_body: '',
+          remark: ''
+      };
+      this.ruleForm.cate_id = this.cateId;
+      this.ruleForm.app_id = this.appId;
     },
     //  切换api信息
     sendApiInfo (title, id) {
       this.apiTitle = title;
       this.apiId = id;
+      this.getOneApi(id);
     },
     // 删除api 信息
     deleteApiData () {
@@ -198,6 +255,8 @@ export default {
             return false;
         }
         this.$common.successMsg('删除Api成功');
+        this.resetForm();
+        this.apiId = 0;
         this.getApiList(this.cateId);
       }, function (res) {
         this.$common.errorMsg(res.status);
@@ -205,7 +264,7 @@ export default {
     },
     //进去request页面
     enterRequest () {
-      var url = '/request/' + this.cateId + '/' + this.apiId;
+      var url = '/request/' + this.appId + '/' + this.cateId + '/' + this.apiId;
       this.$router.push(url);
     }
   }
