@@ -12,8 +12,8 @@ div, p, h1, h2, h3, h3, h5, h6, button, a, input, html, body{
 }
 
 .divider{
-    border-top: 1px solid rgba(34,36,38,.15);
-    border-bottom: 1px solid rgba(255,255,255,.1);
+    border-top: 1px solid rgba(34,36,38,.3);
+    border-bottom: 1px solid rgba(255,255,255,.5);
     margin: 1rem 0;
     line-height: 1;
     height: 0;

@@ -17,6 +17,7 @@ import '../../static/css/site.css'
 import 'normalize.css'
 import home from '@/components/home'
 import apiList from '../components/api/apiList.vue'
+import apiDetail from  '../components/api/apiDetail.vue'
 import app from '../components/app/app.vue'
 import doc from '../components/doc/doc.vue'
 import request from '../components/request/request.vue'
@@ -35,13 +36,16 @@ export default new Router({
     path: '/app',
     component: app
   }, {
-    path: '/api/list/:app_id/:cate_id',
+    path: '/api/list/:cate_id',
     component: apiList
+  },{
+    path: '/api/detail/:cate_id/:api_id',
+    component: apiDetail
   }, {
     path: '/doc',
     component: doc
   }, {
-    path: '/request',
+    path: '/request/:cate_id/:api_id',
     component: request
   }
   ]
