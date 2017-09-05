@@ -10,21 +10,42 @@ API 管理系统
 git clone https://github.com/nusr/RestBoard.git
 ```
 
-建议 fork 一份，邀请请您有时间帮忙改进该项目
+建议 fork 一份，热情期待您帮忙贡献该项目，为广大客户端开发和测试同学提供帮助。
 
-创建数据库
+### 1. 引入nginx 配置
 
-参考 `config/createdb.sql`
+nginx 配置参考 `config/restboard.conf` 然后再 `nginx.conf` 里面通过 `include` 引入。
 
-修改nginx 配置
+```
+include /var/www/RestBoard/config/restboard.conf;
+```
 
-参考 `config/restboard.conf`
+配置hosts 后重启nginx `nginx -s reload`。
 
-Rest Board
+### 2. 创建数据库和表结构
 
-API management
+```
+-- 创建数据库与用户
+drop database if exists restboard;
+create database if not exists restboard default character set utf8 collate utf8_general_ci;
+grant all privileges on restboard.* to 'restboard'@'localhost' identified by 'restboard';
+flush privileges;
+quit
+```
 
-提供功能
+执行如下命令创建表结构
+
+```
+php artisan migrate
+```
+
+如果希望创建表结构时增加示例数据，可以执行如下命令。创建的数据可以删除，所以建议您加上 `--seed` 参数，方便快速上手。
+
+```
+php artisan migrate --seed
+```
+
+## 功能
 
 1. API 信息管理
 1. API 测试记录
