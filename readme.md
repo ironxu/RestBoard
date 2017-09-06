@@ -129,9 +129,14 @@ API 应该有版本信息
 
 基于markdown，结合API 信息进行管理和编写
 
-## TODO
+## TODO 功能列表
 
-权限管理
+1. [ ] api 迭代版本分类
+1. [ ] api 模块发奋
+1. [ ] api 文档
+1. [ ] api 字段字典
+1. [ ] api 约束文章
+1. [ ] 权限管理
 
 ## 技术选型
 
@@ -143,7 +148,29 @@ API 应该有版本信息
 
 服务器软件: nginx
 
+## 参入开发
 
-## 说明
+### 前端开发
 
-本项目基于vue, element 和laravel, 请遵守开源协议，转载请注明出处。
+进入 `frontend` 目录，执行如下命令
+
+```
+# 安装扩展
+npm install
+
+# 运行开发模式
+npm run dev
+
+# 文件打包
+npm run build
+```
+
+### 后端开发
+
+重启nginx 后，启动服务，然后在`app/Http/Controllers` 目录下编写代码。
+
+`doc` 目录已有所有 `api` 的接口文档，可以参考。
+
+## 最后
+
+本项目基于vue, element 和laravel, 欢迎贡献。
