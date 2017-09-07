@@ -98,7 +98,7 @@ export default {
         this.appId = this.$route.params.app_id;
         // console.log(this.appId)
         this.cateId = this.$route.params.cate_id;
-        console.log(this.cateId);
+        // console.log(this.cateId);
         // console.log(this.$route.params)
         this.getAllCategory(this.appId);
         this.getOneApp();
@@ -126,8 +126,8 @@ export default {
          },
          // 获取分类下的API列表
          getApiList () {
-            // var url = this.$common.baseUrl + 'apis?app_id=' + this.appId + '&cate_id=' + this.cateId;
-            var url = this.$common.baseUrl + '/apis?app_id=' + this.appId + '&cate_id=' + 2;
+            var url = this.$common.baseUrl + '/apis?app_id=' + this.appId + '&cate_id=' + this.cateId;
+            // var url = this.$common.baseUrl + '/apis?app_id=' + this.appId + '&cate_id=' + 2;
             // console.log(url);
             this.$http.get(url).then(function (res) {
                 if (res.status !== 200) {

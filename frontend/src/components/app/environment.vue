@@ -63,7 +63,7 @@
               <template scope="scope">
                 <el-button-group>
                   <el-button icon="edit" size="small" @click="startEditEnvData(scope.row)">编辑</el-button>
-                  <el-button icon="delete" size="small" type="danger" @click="deleteEnvData(scope.$index, ruleEnvForm.id)">删除</el-button>
+                  <el-button icon="delete" size="small" @click="deleteEnvData(scope.$index, ruleEnvForm.id)">删除</el-button>
                 </el-button-group>
               </template>
             </el-table-column>
