@@ -15,5 +15,6 @@ class DatabaseSeeder extends Seeder
         $this->call(EnvTableSeeder::class);
         $this->call(CategoryTableSeeder::class);
         $this->call(ApiTableSeeder::class);
+        $this->call(RequestTableSeeder::class);
     }
 }
