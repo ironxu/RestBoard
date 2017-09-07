@@ -141,7 +141,7 @@ export default {
     this.ruleForm.cate_id = this.cateId;
     this.getApiList(this.cateId);
     if (this.apiId !== 0) {
-      this.getOneApi(id);
+      this.getOneApi(this.apiId);
     }
   },
   methods: {
