@@ -67,7 +67,6 @@
                         <router-link v-bind="{to:'/api/detail/' + appId + '/' + cateId + '/' + scope.row.id}"><el-button size="small">编辑</el-button></router-link>
                         <el-button
                           size="small"
-                          type="danger"
                           @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                       </template>
                     </el-table-column>
@@ -120,7 +119,6 @@ export default {
 
         },
         handleNodeClick(data) {
-            // console.log(data.id);
             this.cateId = data.id;
             this.getApiList();
          },
@@ -128,13 +126,14 @@ export default {
          getApiList () {
             var url = this.$common.baseUrl + '/apis?app_id=' + this.appId + '&cate_id=' + this.cateId;
             // var url = this.$common.baseUrl + '/apis?app_id=' + this.appId + '&cate_id=' + 2;
-            // console.log(url);
             this.$http.get(url).then(function (res) {
                 if (res.status !== 200) {
                   this.$common.errorMsg(res.status)
                   return false
                 }
                 this.tableData = res.body;
+            }, function (res) {
+               this.tableData = new Array();
             })
         },
          // 获取一个APP的信息

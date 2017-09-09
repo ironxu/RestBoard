@@ -84,7 +84,7 @@ export default {
     },
     // 获取级联数据
     getCascader(){
-      var url = this.$common.baseUrl  + '/categories/app/4?type=cascader'
+      var url = this.$common.baseUrl  + '/categories/app/' + this.appId + '?type=cascader'
       this.$http.get(url).then(function (res) {
         //// console.log(res.body)
         if(res.status !== 200){
