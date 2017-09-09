@@ -258,8 +258,13 @@ export default {
     },
     //进去request页面
     enterRequest () {
-      var url = '/request/' + this.appId + '/' + this.cateId + '/' + this.apiId;
-      this.$router.push(url);
+        if (this.apiId > 0) {
+            var path = '/request/' + this.appId + '/' + this.cateId + '/' + this.apiId;
+            this.$router.push(path);
+        } else {
+            this.$common.errorMsg('API Id为0');
+        }
+        
     }
   }
 }

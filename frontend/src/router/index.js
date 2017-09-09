@@ -10,11 +10,16 @@ import elementUi from 'element-ui'
 // 完整引入
 Vue.use(elementUi)
 import 'element-ui/lib/theme-default/index.css'
+// iview完整引入
+import iView from 'iview';
+import 'iview/dist/styles/iview.css';    // 使用 CSS
+Vue.use(iView);
+
 
 // 全局样式
 import '../../static/css/site.css'
 //css重置
-import 'normalize.css'
+// import 'normalize.css'
 import home from '@/components/home'
 import apiList from '../components/api/apiList.vue'
 import apiDetail from  '../components/api/apiDetail.vue'
