@@ -37,7 +37,7 @@
                 <div class="app-name-header other">{{ruleForm.name}}</div>
                 <el-button-group>
                   <el-button icon="edit" size="small" @click="editApp">编辑</el-button>
-                  <el-button icon="delete" size="small" type="danger" @click="deleteAppData(ruleForm.id)">删除</el-button>
+                  <el-button icon="delete" size="small" @click="deleteAppData(ruleForm.id)">删除</el-button>
                 </el-button-group>
               </div>
               <div class="app-desc">
@@ -285,9 +285,9 @@ export default {
           </span>
           <span style="float: right; margin-right: 20px">
             <el-button-group>
-              <el-button size="small" icon="more" type="danger" on-click={() => this.moreApi( data)}>API</el-button>
-              <el-button size="small" plain icon="edit" type="info" on-click={() => this.editCategory( data)}>edit</el-button>
-              <el-button size="small" icon="delete" type="danger" on-click={() => this.removeCategory (data)}>Delete</el-button>
+              <el-button size="small" icon="more" on-click={() => this.moreApi( data)}>API</el-button>
+              <el-button size="small" icon="edit" on-click={() => this.editCategory( data)}>编辑</el-button>
+              <el-button size="small" icon="delete" on-click={() => this.removeCategory (data)}>删除</el-button>
             </el-button-group>
           </span>
         </span>)
