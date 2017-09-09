@@ -11,6 +11,7 @@
                 <el-cascader
                     :options="options"
                     v-model="categoryForm.pid"
+                    placeholder="顶级分类"
                     @change="handleChange">
                 </el-cascader>
                 <!-- <el-input v-model="categoryForm.pid"></el-input> -->
