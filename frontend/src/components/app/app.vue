@@ -271,8 +271,8 @@ export default {
     // 进入api列表页
     moreApi(data){
       // console.log(data.id);is.currentAppID;
-      // var temp = '/api/list/' + this.currentAppID + '/' + data.id;
-      var temp = '/api/list/' + this.currentAppID + '/' + 1;
+      var temp = '/api/list/' + this.currentAppID + '/' + data.id;
+      // var temp = '/api/list/' + this.currentAppID + '/' + 1;
       // console.log(temp);
       this.$router.push(temp);
     },

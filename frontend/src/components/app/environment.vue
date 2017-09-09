@@ -31,7 +31,7 @@
               </el-form-item>
             </el-form>
           </el-dialog>
-          <el-table :data="envTableData" border fit stripe style="width: 95%">
+          <el-table :data="envTableData" border :fit="true" stripe style="width: 95%">
             <el-table-column label="名称" width="150">
               <template scope="scope">
                 <span>{{ scope.row.name}}</span>
