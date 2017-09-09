@@ -9,7 +9,7 @@
         </div>
       </el-col>
 
-      <el-col :span="20" class="mainContent">
+      <el-col :span="19" class="mainContent">
         <div class="grid-content bg-purple-light">
             <el-breadcrumb separator="/">
                   <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
@@ -17,9 +17,9 @@
                   <!-- <el-breadcrumb-item>{{}}</el-breadcrumb-item> -->
             </el-breadcrumb>
             <el-button-group>
-              <el-button type="danger" icon="more" @click="enterRequest">请求</el-button>
-              <el-button icon="plus"  @click="addApi">添加</el-button>
-              <el-button type="danger" icon="delete" @click="deleteApiData">删除</el-button>
+              <el-button size="small" icon="more" @click="enterRequest">请求</el-button>
+              <el-button size="small" icon="plus"  @click="addApi">添加</el-button>
+              <el-button size="small" icon="delete" @click="deleteApiData">删除</el-button>
             </el-button-group>
         </div>
         <div>
@@ -52,23 +52,23 @@
                 </el-col>
               </el-row>
               <el-form-item label="请求头" prop="req_header">
-                <el-input type="textarea" v-model="ruleForm.req_header"></el-input>
+                <el-input type="textarea" :minRows=1 :maxRows=8 :autosize="true" v-model="ruleForm.req_header"></el-input>
               </el-form-item>
               <el-form-item label="请求体" prop="req_body">
-                <el-input type="textarea" v-model="ruleForm.req_body"></el-input>
+                <el-input type="textarea" :minRows=1 :maxRows=8 :autosize="true" v-model="ruleForm.req_body"></el-input>
               </el-form-item>
               <h3><el-form-item label="响应"></el-form-item></h3>
               <el-form-item label="响应头" prop="resp_header">
-                <el-input type="textarea" v-model="ruleForm.resp_header"></el-input>
+                <el-input type="textarea" :minRows=1 :maxRows=8 :autosize="true" v-model="ruleForm.resp_header"></el-input>
               </el-form-item>
               <el-form-item label="响应体" prop="resp_body">
                 <template>
                   <el-tabs v-model="activeName">
                     <el-tab-pane label="raw" name="raw">
-                      <el-input type="textarea" v-model="ruleForm.resp_body"></el-input>
+                      <el-input type="textarea" :minRows=1 :maxRows=8 :autosize="true" v-model="ruleForm.resp_body"></el-input>
                     </el-tab-pane>
                     <el-tab-pane label="json" name="json">
-                      <el-input type="textarea" placeholder="json" readonly></el-input>
+                      <el-input type="textarea" :minRows=1 :maxRows=8 :autosize="true" v-model="ruleForm.resp_body_json" readonly></el-input>
                     </el-tab-pane>
                   </el-tabs>
                 </template>
@@ -78,8 +78,8 @@
               </el-form-item>
 
               <el-form-item>
-                <el-button @click="resetForm('ruleForm')">重置</el-button>
-                <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+                <el-button size="small" type="primary" @click="submitForm('ruleForm')">保存</el-button>
+                <el-button size="small" @click="resetForm('ruleForm')">重置</el-button>
               </el-form-item>
             </el-form>
           </div>
@@ -140,7 +140,7 @@ export default {
     this.ruleForm.app_id = this.appId;
     this.ruleForm.cate_id = this.cateId;
     this.getApiList(this.cateId);
-    if (this.apiId !== 0) {
+    if (this.apiId != 0) {
       this.getOneApi(this.apiId);
     }
   },
@@ -149,7 +149,6 @@ export default {
      getApiList (id) {
         // var url = this.$common.baseUrl + 'apis?app_id=' + this.appId + '&cate_id=' + this.cateId;
         var url = this.$common.baseUrl + '/apis?app_id=' + this.appId + '&cate_id=' + id;
-        // console.log(url);
         this.$http.get(url).then(function (res) {
             if (res.status !== 200) {
               this.$common.errorMsg(res.status)
@@ -165,7 +164,6 @@ export default {
           this.$http.get(url).then(function (res) {
             if (res.status === 200) {
               this.ruleForm = res.body
-              // console.log(this.appData)
             } else {
               this.$common.errorMsg(res.status)
             }
@@ -175,13 +173,12 @@ export default {
         this.$refs[formName].validate((valid) => {
           if (valid) {
             // 如果APIID 为0，添加数据
-            if (this.apiId === 0) {
+            if (this.apiId == 0) {
               this.addApiData();
               return;
             }
             // 否则更新数据
             this.updateApiData(this.apiId);
-            console.log(this.apiId);
           } else {
             this.$common.errorMsg('未输入有效信息');
             return false;
@@ -199,7 +196,6 @@ export default {
           this.$common.successMsg('更新Api成功');
           this.getApiList(this.cateId);
           this.apiTitle = this.ruleForm.name;
-          // console.log(res.body.id);
         })
       },
       // 点击添加API按钮
@@ -219,7 +215,6 @@ export default {
         this.getApiList(this.cateId);
         this.apiId = res.body.id;
         this.apiTitle = this.ruleForm.name;
-        // console.log(res.body.id);
       })
     },
     resetForm (formName) {
@@ -248,7 +243,6 @@ export default {
     // 删除api 信息
     deleteApiData () {
       var url = this.$common.baseUrl + '/apis/' + this.apiId;
-      console.log(url);
       this.$http.delete(url).then(function (res) {
         if(res.status !== 200){
             this.$common.errorMsg(res.status);
@@ -264,8 +258,13 @@ export default {
     },
     //进去request页面
     enterRequest () {
-      var url = '/request/' + this.appId + '/' + this.cateId + '/' + this.apiId;
-      this.$router.push(url);
+        if (this.apiId > 0) {
+            var path = '/request/' + this.appId + '/' + this.cateId + '/' + this.apiId;
+            this.$router.push(path);
+        } else {
+            this.$common.errorMsg('API Id为0');
+        }
+        
     }
   }
 }
