@@ -143,7 +143,7 @@ class RequestController extends Controller
         // 检查是否已经有request，如果有数据就返回当前
         if (!empty($lastRequest)) {
             $req = current($lastRequest);
-            return response(['id' => $req['id']]);
+            return response($req);
         } else {
             // 如果当前api 没有request，就根据api 创建一条
             $api = Api::find($apiid);
