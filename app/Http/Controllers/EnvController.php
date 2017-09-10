@@ -14,9 +14,13 @@ class EnvController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($appid)
+    public function index(Request $request, $appid)
     {
-        $data = Env::where('app_id', $appid)->get()->toArray();
+        if ($request->input('type', '') == 'cascader') {
+            $data = Env::where('app_id', $appid)->get(['id', 'name'])->toArray();
+        } else {
+            $data = Env::where('app_id', $appid)->get()->toArray();
+        }
 
         if (empty($data)) {
             $data = [
