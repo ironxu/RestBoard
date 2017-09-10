@@ -33,4 +33,5 @@ Route::resource('apis', 'ApiController');
 // Request
 Route::post('requests/api/{apiid}', 'RequestController@api');
 Route::get('requests/api/{apiid}', 'RequestController@index');
+Route::post('requests/request/{id}', 'RequestController@request');
 Route::resource('requests', 'RequestController');

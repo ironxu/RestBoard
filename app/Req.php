@@ -16,4 +16,17 @@ class Req extends Model
     protected $fillable = ['app_id', 'api_id', 'cate_id', 'env_id', 'name', 'description', 'method', 'uri', 'req_header', 'req_body', 'resp_header', 'resp_body', 'remark', 'opname'];
 
     protected $table = "requests";
+
+    // headers 转为字符串
+    public static function headersToStr($headers)
+    {
+        $str = '';
+        foreach ($headers as $headerKey => $headerValue) {
+            $str .= $headerKey . ": ";
+            $str .= implode(";", $headerValue);
+            $str .= "\n";
+        }
+
+        return $str;
+    }
 }
